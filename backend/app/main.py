@@ -27,13 +27,17 @@ class BenchmarkRequest(BaseModel):
 
 
 app = FastAPI(title="Portfolio Optimizer API", version="1.0.0")
-allowed_origins = [
+default_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://daa-portfolio-optimizer.vercel.app",
+]
+configured_origins = [
     origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
-    ).split(",")
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
     if origin.strip()
 ]
+allowed_origins = list(dict.fromkeys(default_origins + configured_origins))
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
